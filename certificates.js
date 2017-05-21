@@ -1,8 +1,9 @@
 const Promise = require('bluebird')
 
 class Certificates {
-  constructor(store) {
+  constructor(store, keypairs) {
     this.store = store
+    this.keypairs = keypairs
   }
 
   checkAsync({ fullchainPath, privkeyPath, certPath, chainPath }) {
@@ -10,6 +11,8 @@ class Certificates {
     if (!fullchainPath || !privkeyPath || !certPath || !chainPath) {
       return Promise.reject(new Error('missing one or more of privkeyPath, fullchainPath, certPath, chainPath from options'))
     }
+
+    console.log(privkeyPath, certPath, chainPath)
 
     const { s3, options } = this.store
     const Bucket = options.S3.bucketName
@@ -29,10 +32,19 @@ class Certificates {
       })
   }
 
+  setAsync() {
+
+  }
+
   checkKeypairAsync({ domainKeyPath }) {
-    console.log('[certificates.checkKeypairAsync]')
+    console.log('[certificates.checkKeypairAsync]*')
     if (!domainKeyPath) return Promise.reject(new Error('missing options.domainKeyPath'))
-    console.log(domainKeyPath)
+    return this.keypairs.checkAsync(domainKeyPath, 'pem')
+  }
+
+  setKeypairAsync({ domainKeyPath }, keypair) {
+    console.log('[certificates.setKeypairAsync]*')
+    return this.keypairs.setAsync(domainKeyPath, keypair, 'pem')
   }
 }
 

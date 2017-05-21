@@ -32,7 +32,7 @@ class Store {
 
     this.keypairs = new Keypairs(this)
     this.accounts = new Accounts(this, this.keypairs)
-    this.certificates = new Certificates(this)
+    this.certificates = new Certificates(this, this.keypairs)
   }
 
   getOptions() {

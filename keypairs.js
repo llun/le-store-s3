@@ -6,8 +6,22 @@ class Keypairs {
   }
 
   checkAsync(keypath, format) {
-    console.log('[keypairs.checkAsync]')
+    console.log('[keypairs.checkAsync]*')
     if (!keypath) return null
+
+    const { s3, options } = this.store
+    const Bucket = options.S3.bucketName
+    return s3.getObjectAsync({
+      Bucket,
+      Key: keypath
+    }).then(body => {
+      const content = body.Body.toString()
+      return format === 'jwk'
+        ? { privateKeyJwk: JSON.parse(content) }
+        : { privateKeyPem: content }
+    }).catch(error => {
+      return null
+    })
   }
 
   setAsync(keypath, keypair, format) {

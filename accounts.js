@@ -10,7 +10,7 @@ class Accounts {
   }
 
   getAccountKeyPath({ accountsDir, accountId, accountKeyPath, email }) {
-    console.log('[accounts.getAccountKeyPath]')
+    console.log('[accounts.getAccountKeyPath]*')
     let head = Promise.resolve(accountId)
     if (email && !accountId) head = this.getAccountIdByEmail({ email, accountsDir })
 
