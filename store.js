@@ -5,17 +5,23 @@ const path = require('path')
 const Accounts = require('./accounts')
 const Certificates = require('./certificates')
 const Keypairs = require('./keypairs')
+const Configs = require('./configs')
 
 const DEFAULT_OPTIONS = {
-  privkeyPath: 'live/:hostname/privkey.pem',
-  fullchainPath: 'live/:hostname/fullchain.pem',
-  certPath: 'live/:hostname/cert.pem',
-  chainPath: 'live/:hostname/chain.pem',
+  privkeyPath: ':configDir/live/:hostname/privkey.pem',
+  fullchainPath: ':configDir/live/:hostname/fullchain.pem',
+  certPath: ':configDir/live/:hostname/cert.pem',
+  chainPath: ':configDir/live/:hostname/chain.pem',
 
-  accountsDir: 'accounts/:serverDir',
+  configDir: 'configs',
+  renewalPath: ':configDir/renewal/:hostname.conf',
+  renewalDir: ':configDir/renewal/',
+  accountsDir: ':configDir/accounts/:serverDir',
   serverDirGet({ server }) {
     return (server || '').replace('https://', '').replace(/(\/)$/, '').replace(/\//g, path.sep)
-  }
+  },
+
+  rsaKeySize: 2048
 }
 
 class Store {
@@ -31,8 +37,9 @@ class Store {
     }
 
     this.keypairs = new Keypairs(this)
+    this.configs = new Configs(this)
     this.accounts = new Accounts(this, this.keypairs)
-    this.certificates = new Certificates(this, this.keypairs)
+    this.certificates = new Certificates(this, this.keypairs, this.configs)
   }
 
   getOptions() {

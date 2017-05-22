@@ -1,9 +1,11 @@
 const Promise = require('bluebird')
+const path = require('path')
 
 class Certificates {
-  constructor(store, keypairs) {
+  constructor(store, keypairs, configs) {
     this.store = store
     this.keypairs = keypairs
+    this.configs = configs
   }
 
   checkAsync({ fullchainPath, privkeyPath, certPath, chainPath }) {
@@ -32,8 +34,108 @@ class Certificates {
       })
   }
 
-  setAsync() {
+  setAsync({
+    pems,
+    liveDir,
+    configDir,
+    archiveDir,
 
+    domains,
+
+    certPath,
+    fullchainPath,
+    chainPath,
+    privkeyPath,
+    domainPrivateKeyPath,
+    domainKeyPath,
+    renewalPath,
+
+    account,
+    email,
+    agreeTos,
+    server,
+    acmeDiscoveryUrl,
+    http01Port,
+    rsaKeySize
+  }) {
+    console.log('[certificates.setAsync]*')
+    const { s3, options } = this.store
+    const configs = this.configs
+    const Bucket = options.S3.bucketName
+    return this.configs.getAsync({
+      liveDir,
+      configDir,
+
+      domains,
+
+      certPath,
+      fullchainPath,
+      chainPath,
+      privkeyPath,
+      domainPrivateKeyPath,
+      renewalPath,
+
+      account,
+      email,
+      agreeTos,
+      server,
+      acmeDiscoveryUrl,
+      http01Port,
+      rsaKeySize
+    })
+    .then(pyobj => {
+      pyobj.checkpoints = parseInt(pyobj.checkpoints, 10) || 0
+      liveDir = liveDir || path.join(configDir, 'live', domains[0])
+      certPath = certPath || pyobj.cert || path.join(liveDir, 'cert.pem')
+      fullchainPath = fullchainPath || pyobj.fullchain || path.join(liveDir, 'fullchain.pem')
+      chainPath = chainPath || pyobj.chain || path.join(liveDir, 'chain.pem')
+      privkeyPath = privkeyPath || pyobj.privkey || domainKeyPath || path.join(liveDir, 'privkey.pem')
+
+      archiveDir = archiveDir || path.join(configDir, 'archive', domains[0])
+
+      const checkpoints = pyobj.checkpoints.toString()
+      const certArchive = path.join(archiveDir, `cert${checkpoints}.pem`)
+      const fullchainArchive = path.join(archiveDir, `fullchain${checkpoints}.pem`)
+      const chainArchive = path.join(archiveDir, `chain${checkpoints}.pem`)
+      const privkeyArchive = path.join(archiveDir, `privkey${checkpoints}.pem`)
+
+      return Promise.all([
+        s3.putObjectAsync({ Bucket, Key: certArchive, Body: pems.cert }),
+        s3.putObjectAsync({ Bucket, Key: certPath, Body: pems.cert }),
+        s3.putObjectAsync({ Bucket, Key: chainArchive, Body: pems.chain }),
+        s3.putObjectAsync({ Bucket, Key: chainPath, Body: pems.chain }),
+        s3.putObjectAsync({ Bucket, Key: fullchainArchive, Body: pems.cert + pems.chain }),
+        s3.putObjectAsync({ Bucket, Key: fullchainPath, Body: pems.cert + pems.chain }),
+        s3.putObjectAsync({ Bucket, Key: privkeyArchive, Body: pems.privkey }),
+        s3.putObjectAsync({ Bucket, Key: privkeyPath, Body: pems.privkey })])
+      .then(() => {
+        pyobj.checkpoints += 1
+        return configs.writeRenewalConfig({
+          pyobj,
+          liveDir,
+          configDir,
+          domains,
+          certPath,
+          fullchainPath,
+          chainPath,
+          privkeyPath,
+          domainPrivateKeyPath,
+          account,
+          email,
+          agreeTos,
+          server,
+          acmeDiscoveryUrl,
+          http01Port,
+          rsaKeySize,
+          renewalPath
+        })
+      })
+      .then(() => ({
+        privkey: pems.privkey,
+        cert: pems.cert,
+        chain: pems.chain
+      }))
+    })
   }
 
   checkKeypairAsync({ domainKeyPath }) {
