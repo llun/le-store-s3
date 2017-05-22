@@ -10,7 +10,6 @@ class Accounts {
   }
 
   getAccountKeyPath({ accountsDir, accountId, accountKeyPath, email }) {
-    console.log('[accounts.getAccountKeyPath]*')
     let head = Promise.resolve(accountId)
     if (email && !accountId) head = this.getAccountIdByEmail({ email, accountsDir })
 
@@ -21,7 +20,6 @@ class Accounts {
   }
 
   getAccountIdByEmail({ email, accountsDir }) {
-    console.log('[accounts.getAccountIdByEmail]*')
     const { s3, options } = this.store
     const Bucket = options.S3.bucketName
     return s3.listObjectsAsync({ Bucket, Prefix: accountsDir })
@@ -49,12 +47,10 @@ class Accounts {
   }
 
   getAccountIdByPublicKey(keypair) {
-    console.log('[accounts.getAccountIdByPublicKey]*')
     return crypto.createHash('md5').update(keypair.publicKeyPem).digest('hex')
   }
 
   checkAsync({ accountId, email, accountsDir }) {
-    console.log('[accounts.checkAsync]')
     if (!(accountId || email)) return Promise.reject(new Error('must provide accountId or email'))
 
     let head = Promise.resolve(accountId)
@@ -62,13 +58,46 @@ class Accounts {
       head = this.getAccountIdByEmail({ email, accountsDir })
     }
 
+    const files = {}
+    const { s3, options } = this.store
+    const Bucket = options.S3.bucketName
     return head.then(accountId => {
       if (!accountId) return false
+      const accountDir = path.join(accountsDir, accountId)
+      const keys = ['meta', 'private_key', 'regr']
+      return Promise.all(keys.map(key => {
+        return s3.getObjectAsync({ Bucket, Key: path.join(accountDir, `${key}.json`) })
+          .then(item => {
+            const body = item.Body
+            try {
+              files[key] = JSON.parse(body)
+            } catch (error) {
+              files[key] = { error }
+            }
+            return true
+          })
+          .catch(error => { files[key] = { error }})
+      }))
+    }).then(hasAccount => {
+      if (!hasAccount) return null
+
+      if (!Object.keys(files).every(key => !files[key].error) ||
+        !files.private_key || !files.private_key.n) {
+        const error = new Error(`Account ${accountId} was corrupt (had id, but was missing files).`)
+        error.code = 'E_ACCOUNT_CORRUPT'
+        error.data = files
+        return Promise.reject(error)
+      }
+
+      files.accountId = accountId
+      files.id = accountId
+      files.keypair = { privateKeyJwk: files.private_key }
+
+      return files
     })
   }
 
   setAsync({ accountsDir, email }, { keypair, receipt }) {
-    console.log('[accounts.setAsync]*')
     const accountId = this.getAccountIdByPublicKey(keypair)
     const accountDir = path.join(accountsDir, accountId)
     const accountMeta = {
@@ -106,7 +135,6 @@ class Accounts {
   }
 
   checkKeypairAsync({ accountId, email, accountKeyPath, accountsDir }) {
-    console.log('[accounts.checkKeypairAsync]*')
     if (!(accountKeyPath || accountsDir)) {
       return Promise.reject(new Error('must provide one of options.accountKeyPath or options.accountsDir'))
     }
@@ -116,7 +144,6 @@ class Accounts {
   }
 
   setKeypairAsync({ email, accountId, accountsDir }, keypair) {
-    console.log('[accounts.setKeypairAsync]*')
     if (!accountId) {
       accountId = this.getAccountIdByPublicKey(keypair)
     }

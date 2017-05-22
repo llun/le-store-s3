@@ -8,7 +8,6 @@ class Configs {
   }
 
   checkAsync({ renewalPath, pyobj }) {
-    console.log('[configs.checkAsync]')
     return this.checkHelperAsync({ renewalPath })
       .then(pyobj => {
         const exists = pyobj.checkpoints >= 0
@@ -38,7 +37,6 @@ class Configs {
     http01Port,
     rsaKeySize
   }) {
-    console.log('[configs.getAsync]')
     return this.checkHelperAsync({ renewalPath })
       .then(pyobj => {
         const minver = pyobj.checkpoints >= 0;
@@ -103,12 +101,7 @@ class Configs {
       })
   }
 
-  allAsync() {
-    console.log('[configs.allAsync]')
-  }
-
   checkHelperAsync({ renewalPath }) {
-    console.log('[config.checkHelperAsync]')
     const { options, s3 } = this.store
     const Bucket = options.S3.bucketName
     return s3.getObjectAsync({
@@ -141,7 +134,6 @@ class Configs {
     http01Port,
     rsaKeySize
   }) {
-    console.log('[configs.writeRenewalConfig]*')
     pyobj.checkpoints = parseInt(pyobj.checkpoints, 10) || 0
 
     liveDir = liveDir || path.join('live', domains[0])

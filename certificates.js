@@ -9,12 +9,9 @@ class Certificates {
   }
 
   checkAsync({ fullchainPath, privkeyPath, certPath, chainPath }) {
-    console.log('[certificates.checkAsync]')
     if (!fullchainPath || !privkeyPath || !certPath || !chainPath) {
       return Promise.reject(new Error('missing one or more of privkeyPath, fullchainPath, certPath, chainPath from options'))
     }
-
-    console.log(privkeyPath, certPath, chainPath)
 
     const { s3, options } = this.store
     const Bucket = options.S3.bucketName
@@ -22,9 +19,11 @@ class Certificates {
       s3.getObjectAsync({ Bucket, Key: privkeyPath }),
       s3.getObjectAsync({ Bucket, Key: certPath }),
       s3.getObjectAsync({ Bucket, Key: chainPath })])
-      .then(result => {
-        console.log('[Certificates.check]', result)
-      })
+      .then(result => ({
+        privkey: result[0].Body.toString('ascii'),
+        cert: result[1].Body.toString('ascii'),
+        chain: result[2].Body.toString('ascii')
+      }))
       .catch(err => {
         if (options.debug) {
           console.error('[le-store-s3] certificates.check')
@@ -58,7 +57,6 @@ class Certificates {
     http01Port,
     rsaKeySize
   }) {
-    console.log('[certificates.setAsync]*')
     const { s3, options } = this.store
     const configs = this.configs
     const Bucket = options.S3.bucketName
@@ -139,13 +137,11 @@ class Certificates {
   }
 
   checkKeypairAsync({ domainKeyPath }) {
-    console.log('[certificates.checkKeypairAsync]*')
     if (!domainKeyPath) return Promise.reject(new Error('missing options.domainKeyPath'))
     return this.keypairs.checkAsync(domainKeyPath, 'pem')
   }
 
   setKeypairAsync({ domainKeyPath }, keypair) {
-    console.log('[certificates.setKeypairAsync]*')
     return this.keypairs.setAsync(domainKeyPath, keypair, 'pem')
   }
 }

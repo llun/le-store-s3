@@ -6,7 +6,6 @@ class Keypairs {
   }
 
   checkAsync(keypath, format) {
-    console.log('[keypairs.checkAsync]*')
     if (!keypath) return null
 
     const { s3, options } = this.store
@@ -25,7 +24,6 @@ class Keypairs {
   }
 
   setAsync(keypath, keypair, format) {
-    console.log('[keypairs.setAsync]*')
     const key = format === 'jwk'
       ? JSON.stringify(keypair.privateKeyJwk, null, '  ')
       : keypair.privateKeyPem
