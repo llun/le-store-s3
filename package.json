@@ -1,4 +1,10 @@
 {
+  "name": "le-store-s3",
+  "version": "1.0.0",
+  "description": "A S3 strategy for node-letsencrypt and lambda function for handling challenges",
+  "main": "index.js",
+  "author": "Maythee Anegboonlap<null@llun.me>",
+  "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.54.0",
     "bluebird": "^3.5.0",
