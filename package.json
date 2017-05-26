@@ -1,13 +1,23 @@
 {
   "name": "le-store-s3",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A S3 strategy for node-letsencrypt and lambda function for handling challenges",
   "main": "index.js",
-  "author": "Maythee Anegboonlap<null@llun.me>",
+  "author": "Maythee Anegboonlap <null@llun.me>",
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.54.0",
     "bluebird": "^3.5.0",
     "pyconf": "^1.1.2"
-  }
+  },
+  "keywords": [
+    "greenlock",
+    "letsencrypt",
+    "s3",
+    "store"
+  ],
+  "bugs": {
+    "url": "https://github.com/llun/le-store-s3/issues"
+  },
+  "homepage": "https://github.com/llun/le-store-s3#readme"
 }
