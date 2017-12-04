@@ -109,7 +109,7 @@ class Configs {
       Key: renewalPath
     })
     .then(data => pyconf.parseAsync(data.Body))
-    .catch(() => pyconf.readFileAsync(path.join(__dirname, 'renewal.conf.tpl')))
+    .catch(() => pyconf.parseAsync('checkpoints = -1'))
   }
 
   writeRenewalConfig({
