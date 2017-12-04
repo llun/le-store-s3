@@ -1,6 +1,6 @@
 {
   "name": "le-store-s3-no-fs",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Fork of le-store-s3 that does not access the file system",
   "main": "index.js",
   "author": "Tom Medema <tommedema@gmail.com>",
