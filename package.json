@@ -1,9 +1,9 @@
 {
-  "name": "le-store-s3-no-fs",
-  "version": "1.0.2",
-  "description": "Fork of le-store-s3 that does not access the file system",
+  "name": "le-store-s3",
+  "version": "1.0.1",
+  "description": "A S3 strategy for node-letsencrypt and lambda function for handling challenges",
   "main": "index.js",
-  "author": "Tom Medema <tommedema@gmail.com>",
+  "author": "Maythee Anegboonlap <null@llun.me>",
   "license": "ISC",
   "peerDependencies": {
     "aws-sdk": "^2.54.0"
@@ -19,11 +19,7 @@
     "store"
   ],
   "bugs": {
-    "url": "https://github.com/tommedema/le-store-s3-no-fs/issues"
+    "url": "https://github.com/llun/le-store-s3/issues"
   },
-  "homepage": "https://github.com/tommedema/le-store-s3-no-fs",
-  "repository": {
-    "type" : "git",
-    "url" : "https://github.com/tommedema/le-store-s3-no-fs.git"
-  }
+  "homepage": "https://github.com/llun/le-store-s3#readme"
 }
