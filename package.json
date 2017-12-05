@@ -5,8 +5,10 @@
   "main": "index.js",
   "author": "Maythee Anegboonlap <null@llun.me>",
   "license": "ISC",
+  "peerDependencies": {
+    "aws-sdk": "^2.54.0"
+  },
   "dependencies": {
-    "aws-sdk": "^2.54.0",
     "bluebird": "^3.5.0",
     "pyconf": "^1.1.2"
   },
