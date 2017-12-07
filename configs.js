@@ -108,7 +108,7 @@ class Configs {
       Bucket,
       Key: renewalPath
     })
-    .then(data => pyconf.parseAsync(data.Body))
+    .then(data => pyconf.parseAsync(data.Body.toString()))
     .catch(() => pyconf.parseAsync('checkpoints = -1'))
   }
 
