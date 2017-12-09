@@ -9,7 +9,7 @@
     "aws-sdk": "^2.54.0"
   },
   "dependencies": {
-    "bluebird": "^3.5.0",
+    "bluebird": "^3.5.1",
     "pyconf": "^1.1.2"
   },
   "keywords": [
