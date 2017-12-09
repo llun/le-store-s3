@@ -51,12 +51,12 @@ type Options = {
 
 class Store {
   /*::
-  s3: typeof AWS.S3
+  s3: AWS.S3
   options: Options
-  keypairs: typeof Keypairs
-  configs: typeof Configs
-  accounts: typeof Accounts
-  certificates: typeof Certificates
+  keypairs: Keypairs
+  configs: Configs
+  accounts: Accounts
+  certificates: Certificates
   */
 
   constructor(options /*: Options*/) {

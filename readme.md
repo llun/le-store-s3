@@ -1,6 +1,6 @@
 # le-store-s3
 
-Store [node-greenlock](https://github.com/Daplie/node-greenlock) certificates and account information in S3
+Store [node-greenlock](https://git.coolaj86.com/coolaj86/greenlock.js) certificates and account information in S3
 
 ## Using
 
