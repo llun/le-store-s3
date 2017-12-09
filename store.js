@@ -1,3 +1,4 @@
+// @flow
 const Promise = require('bluebird')
 const AWS = require('aws-sdk')
 const path = require('path')
@@ -24,8 +25,41 @@ const DEFAULT_OPTIONS = {
   rsaKeySize: 2048
 }
 
+/*::
+type S3 = {
+  bucketName: string
+}
+
+type Options = {
+  S3: S3,
+
+  privkeyPath: string,
+  fullchangePath: string,
+  certPath: string,
+  chainPath: string,
+
+  configDir: string,
+  renewalPath: string,
+  renewalDir: string,
+  accountsDir: string,
+
+  rsaKeySize: number,
+
+  domainKeyPath: string
+}
+*/
+
 class Store {
-  constructor(options) {
+  /*::
+  s3: typeof AWS.S3
+  options: Options
+  keypairs: typeof Keypairs
+  configs: typeof Configs
+  accounts: typeof Accounts
+  certificates: typeof Certificates
+  */
+
+  constructor(options /*: Options*/) {
     this.s3 = Promise.promisifyAll(new AWS.S3(options.S3))
 
     options.domainKeyPath = options.domainKeyPath ||
