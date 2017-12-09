@@ -63,12 +63,10 @@ class Configs {
           })
         }
 
-        checkpoints = pyobj.checkpoints
         agreeTos = (agreeTos || pyobj.tos) && true
         email = email || pyobj.email
         domains = domains || pyobj.domains
 
-        webrootPath = webrootPath || pyobj.webrootPath[0];
         server = server || acmeDiscoveryUrl || pyobj.server;
 
         certPath = certPath || pyobj.cert;
@@ -76,10 +74,9 @@ class Configs {
         chainPath = chainPath || pyobj.chain;
         fullchainPath = fullchainPath || pyobj.fullchain;
 
-        rsaKeySize = args.rsaKeySize || pyobj.rsaKeySize;
-        http01Port = args.http01Port || pyobj.http01Port;
-        domainKeyPath = args.domainKeyPath || args.keyPath || pyobj.keyPath;
-        return writeRenewalConfig({
+        rsaKeySize = rsaKeySize || pyobj.rsaKeySize;
+        http01Port = http01Port || pyobj.http01Port;
+        return this.writeRenewalConfig({
           pyobj,
           domains,
           liveDir,
@@ -108,7 +105,7 @@ class Configs {
       Bucket,
       Key: renewalPath
     })
-    .then(data => pyconf.parseAsync(data.Body))
+    .then(data => pyconf.parseAsync(data.Body.toString()))
     .catch(() => pyconf.parseAsync('checkpoints = -1'))
   }
 

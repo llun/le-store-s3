@@ -68,7 +68,7 @@ class Accounts {
       return Promise.all(keys.map(key => {
         return s3.getObjectAsync({ Bucket, Key: path.join(accountDir, `${key}.json`) })
           .then(item => {
-            const body = item.Body
+            const body = item.Body.toString('utf8')
             try {
               files[key] = JSON.parse(body)
             } catch (error) {
