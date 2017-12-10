@@ -1,5 +1,7 @@
 # le-store-s3
 
+[![Build Status](https://travis-ci.org/llun/le-store-s3.svg?branch=master)](https://travis-ci.org/llun/le-store-s3)
+
 Store [node-greenlock](https://git.coolaj86.com/coolaj86/greenlock.js) certificates and account information in S3
 
 ## Using
