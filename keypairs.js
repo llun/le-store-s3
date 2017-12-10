@@ -4,10 +4,11 @@ const Promise = require('bluebird')
 /*::
 import type Store from './store.js'
 
-type KeyPairFormat = 'jwk' | 'pem'
-type KeyPair = {
-  privateKeyJwk?:any,
-  privateKeyPem?:any
+export type KeyPairFormat = 'jwk' | 'pem'
+export type KeyPair = {
+  privateKeyPem:any,
+  publicKeyPem:any,
+  privateKeyJwk:any
 }
 */
 class Keypairs {
@@ -19,7 +20,7 @@ class Keypairs {
     this.store = store
   }
 
-  checkAsync(keypath/*:string */, format /*:KeyPairFormat*/) {
+  checkAsync(keypath/*:string */, format /*:KeyPairFormat*/)/*:Promise<?KeyPair>*/ {
     if (!keypath) return null
 
     const { s3, options } = this.store
@@ -37,7 +38,7 @@ class Keypairs {
     })
   }
 
-  setAsync(keypath/*:string*/, keypair/*:KeyPair*/, format/*:KeyPairFormat*/) {
+  setAsync(keypath/*:string*/, keypair/*:KeyPair*/, format/*:KeyPairFormat*/)/*:Promise<KeyPair>*/ {
     const key = format === 'jwk'
       ? JSON.stringify(keypair.privateKeyJwk, null, '  ')
       : keypair.privateKeyPem
