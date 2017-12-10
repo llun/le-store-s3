@@ -5,7 +5,7 @@ const path = require('path')
 const os = require('os')
 
 /*::
-import type Store from './store.js'
+import type Store from './store'
 import type KeyPairs, { KeyPair } from './keypairs'
 
 type AccountKeyPathArgs = {

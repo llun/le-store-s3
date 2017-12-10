@@ -4,7 +4,7 @@ const pyconf = Promise.promisifyAll(require('pyconf'))
 const path = require('path')
 
 /*::
-import type Store from './store.js'
+import type Store from './store'
 
 type Account = {
   id: number
@@ -26,10 +26,11 @@ type PyObj = {
   http01Port: number
 }
 
-type ConfigsArgs = {
-  domains: Array<string>,
+export type ConfigsArgs = {
   liveDir: string,
   configDir: string,
+
+  domains: Array<string>,
 
   certPath: string,
   fullchainPath: string,
@@ -81,10 +82,10 @@ class Configs {
   }
 
   getAsync({
-    domains,
-
     liveDir,
     configDir,
+
+    domains,
 
     certPath,
     fullchainPath,

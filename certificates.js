@@ -1,14 +1,48 @@
+// @flow
 const Promise = require('bluebird')
 const path = require('path')
 
+/*::
+import type Store from './store'
+import type KeyPairs, { KeyPair } from './keypairs'
+import type Configs, { ConfigsArgs } from './configs'
+
+type Pems = {
+  cert: string,
+  chain: string,
+  privkey: string
+}
+
+type DomainArgs = {
+  domainKeyPath: string
+}
+
+type CertificatePathsArgs = {
+  fullchainPath: string,
+  privkeyPath: string,
+  certPath: string,
+  chainPath: string
+}
+
+type CertificateArgs = ConfigsArgs & DomainArgs & {
+  pems: Pems,
+  archiveDir: string
+}
+*/
 class Certificates {
-  constructor(store, keypairs, configs) {
+  /*::
+  store: Store
+  keypairs: KeyPairs
+  configs: Configs
+  */
+
+  constructor(store/*:Store*/, keypairs/*:KeyPairs*/, configs/*:Configs*/) {
     this.store = store
     this.keypairs = keypairs
     this.configs = configs
   }
 
-  checkAsync({ fullchainPath, privkeyPath, certPath, chainPath }) {
+  checkAsync({ fullchainPath, privkeyPath, certPath, chainPath }/*:CertificatePathsArgs*/)/*:Promise<?Pems>*/ {
     if (!fullchainPath || !privkeyPath || !certPath || !chainPath) {
       return Promise.reject(new Error('missing one or more of privkeyPath, fullchainPath, certPath, chainPath from options'))
     }
@@ -56,7 +90,7 @@ class Certificates {
     acmeDiscoveryUrl,
     http01Port,
     rsaKeySize
-  }) {
+  }/*:CertificateArgs*/)/*:Promise<Pems>*/ {
     const { s3, options } = this.store
     const configs = this.configs
     const Bucket = options.S3.bucketName
@@ -136,12 +170,12 @@ class Certificates {
     })
   }
 
-  checkKeypairAsync({ domainKeyPath }) {
+  checkKeypairAsync({ domainKeyPath }/*:DomainArgs*/)/*:Promise<?KeyPair>*/ {
     if (!domainKeyPath) return Promise.reject(new Error('missing options.domainKeyPath'))
     return this.keypairs.checkAsync(domainKeyPath, 'pem')
   }
 
-  setKeypairAsync({ domainKeyPath }, keypair) {
+  setKeypairAsync({ domainKeyPath }/*:DomainArgs*/, keypair/*:KeyPair*/)/*:Promise<KeyPair>*/ {
     return this.keypairs.setAsync(domainKeyPath, keypair, 'pem')
   }
 }

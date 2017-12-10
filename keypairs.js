@@ -2,7 +2,7 @@
 const Promise = require('bluebird')
 
 /*::
-import type Store from './store.js'
+import type Store from './store'
 
 export type KeyPairFormat = 'jwk' | 'pem'
 export type KeyPair = {
