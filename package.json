@@ -1,6 +1,6 @@
 {
   "name": "le-store-s3",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A S3 strategy for node-letsencrypt and lambda function for handling challenges",
   "main": "index.js",
   "author": "Maythee Anegboonlap <null@llun.me>",
