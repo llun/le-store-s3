@@ -1,13 +1,77 @@
+// @flow
 const Promise = require('bluebird')
 const pyconf = Promise.promisifyAll(require('pyconf'))
 const path = require('path')
 
+/*::
+import type Store from './store.js'
+
+type Account = {
+  id: number
+}
+
+type PyObj = {
+  cert: string,
+  privkey: string,
+  chain: string,
+  fullchain: string,
+
+  checkpoints: number,
+  tos: boolean,
+  email: string,
+  domains: string,
+  server: string,
+
+  rsa_key_size: number,
+  http01Port: number
+}
+
+type ConfigsArgs = {
+  domains: Array<string>,
+  liveDir: string,
+  configDir: string,
+
+  certPath: string,
+  fullchainPath: string,
+  chainPath: string,
+  privkeyPath: string,
+  domainPrivateKeyPath: string,
+  renewalPath: string,
+
+  account: Account,
+  email: string,
+  agreeTos: boolean,
+  server: string,
+  acmeDiscoveryUrl: string,
+  http01Port: number,
+  rsaKeySize: number
+}
+
+type HelperConfigsArgs = {
+  renewalPath: string,
+}
+
+type CheckConfigsArgs = HelperConfigsArgs & {
+  pyobj: PyObj
+}
+
+type RenewalConfigsArgs = ConfigsArgs & {
+  pyobj: PyObj
+}
+
+
+*/
+
 class Configs {
-  constructor(store) {
+  /*::
+  store:Store
+  */
+
+  constructor(store/*:Store*/) {
     this.store = store
   }
 
-  checkAsync({ renewalPath, pyobj }) {
+  checkAsync({ renewalPath, pyobj }/*:CheckConfigsArgs*/)/*:Promise<PyObj>*/ {
     return this.checkHelperAsync({ renewalPath })
       .then(pyobj => {
         const exists = pyobj.checkpoints >= 0
@@ -36,7 +100,7 @@ class Configs {
     acmeDiscoveryUrl,
     http01Port,
     rsaKeySize
-  }) {
+  }/*:ConfigsArgs*/) {
     return this.checkHelperAsync({ renewalPath })
       .then(pyobj => {
         const minver = pyobj.checkpoints >= 0;
@@ -98,7 +162,7 @@ class Configs {
       })
   }
 
-  checkHelperAsync({ renewalPath }) {
+  checkHelperAsync({ renewalPath }/*:HelperConfigsArgs*/)/*:Promise<PyObj>*/ {
     const { options, s3 } = this.store
     const Bucket = options.S3.bucketName
     return s3.getObjectAsync({
@@ -130,7 +194,7 @@ class Configs {
     acmeDiscoveryUrl,
     http01Port,
     rsaKeySize
-  }) {
+  }/*:RenewalConfigsArgs*/)/*:Promise<PyObj>*/ {
     pyobj.checkpoints = parseInt(pyobj.checkpoints, 10) || 0
 
     liveDir = liveDir || path.join('live', domains[0])
@@ -153,7 +217,7 @@ class Configs {
       cert: certPath,
       chain: chainPath,
 
-      http01Port: http01Port,
+      http01Port,
       keyPath: domainPrivateKeyPath || privkeyPath,
       rsaKeySize: rsaKeySize,
       checkpoints: pyobj.checkpoints,
@@ -166,6 +230,7 @@ class Configs {
     })
 
     Object.keys(updates).forEach(key => {
+      // $FlowFixMe
       pyobj[key] = updates[key]
     })
 
@@ -179,12 +244,13 @@ class Configs {
       })).then(() => pyobj)
   }
 
-  pyToJson(pyobj) {
+  pyToJson(pyobj/*:?any*/)/*:?any*/ {
     if (!pyobj) return null
 
+    const obj = pyobj
     const jsobj = {}
-    Object.keys(pyobj).forEach(key => {
-      jsobj[key] = pyobj[key]
+    Object.keys(obj).forEach(key => {
+      jsobj[key] = obj[key]
     })
     delete jsobj.__lines
     delete jsobj.__keys
