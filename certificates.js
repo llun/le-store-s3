@@ -50,9 +50,9 @@ class Certificates {
     const { s3, options } = this.store
     const Bucket = options.S3.bucketName
     return Promise.all([
-      s3.getObjectAsync({ Bucket, Key: privkeyPath }),
-      s3.getObjectAsync({ Bucket, Key: certPath }),
-      s3.getObjectAsync({ Bucket, Key: chainPath })])
+      s3.getObject({ Bucket, Key: privkeyPath }).promise(),
+      s3.getObject({ Bucket, Key: certPath }).promise(),
+      s3.getObject({ Bucket, Key: chainPath }).promise()])
       .then(result => ({
         privkey: result[0].Body.toString('ascii'),
         cert: result[1].Body.toString('ascii'),
@@ -132,14 +132,14 @@ class Certificates {
       const privkeyArchive = path.join(archiveDir, `privkey${checkpoints}.pem`)
 
       return Promise.all([
-        s3.putObjectAsync({ Bucket, Key: certArchive, Body: pems.cert }),
-        s3.putObjectAsync({ Bucket, Key: certPath, Body: pems.cert }),
-        s3.putObjectAsync({ Bucket, Key: chainArchive, Body: pems.chain }),
-        s3.putObjectAsync({ Bucket, Key: chainPath, Body: pems.chain }),
-        s3.putObjectAsync({ Bucket, Key: fullchainArchive, Body: pems.cert + pems.chain }),
-        s3.putObjectAsync({ Bucket, Key: fullchainPath, Body: pems.cert + pems.chain }),
-        s3.putObjectAsync({ Bucket, Key: privkeyArchive, Body: pems.privkey }),
-        s3.putObjectAsync({ Bucket, Key: privkeyPath, Body: pems.privkey })])
+        s3.putObject({ Bucket, Key: certArchive, Body: pems.cert }).promise(),
+        s3.putObject({ Bucket, Key: certPath, Body: pems.cert }).promise(),
+        s3.putObject({ Bucket, Key: chainArchive, Body: pems.chain }).promise(),
+        s3.putObject({ Bucket, Key: chainPath, Body: pems.chain }).promise(),
+        s3.putObject({ Bucket, Key: fullchainArchive, Body: pems.cert + pems.chain }).promise(),
+        s3.putObject({ Bucket, Key: fullchainPath, Body: pems.cert + pems.chain }).promise(),
+        s3.putObject({ Bucket, Key: privkeyArchive, Body: pems.privkey }).promise(),
+        s3.putObject({ Bucket, Key: privkeyPath, Body: pems.privkey }).promise()])
       .then(() => {
         pyobj.checkpoints += 1
         return configs.writeRenewalConfig({

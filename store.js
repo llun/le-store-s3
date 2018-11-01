@@ -60,7 +60,7 @@ class Store {
   */
 
   constructor(options /*: Options*/) {
-    this.s3 = Promise.promisifyAll(new AWS.S3(options.S3))
+    this.s3 = new AWS.S3(options.S3)
 
     options.domainKeyPath = options.domainKeyPath ||
       options.privkeyPath || DEFAULT_OPTIONS.privkeyPath
