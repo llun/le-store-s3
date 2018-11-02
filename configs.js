@@ -1,5 +1,5 @@
 // @flow
-const Promise = require('bluebird')
+const Promise = require('bluebird');
 const pyconf = Promise.promisifyAll(require('pyconf'))
 const path = require('path')
 
@@ -166,10 +166,10 @@ class Configs {
   checkHelperAsync({ renewalPath }/*:HelperConfigsArgs*/)/*:Promise<PyObj>*/ {
     const { options, s3 } = this.store
     const Bucket = options.S3.bucketName
-    return s3.getObjectAsync({
+    return s3.getObject({
       Bucket,
       Key: renewalPath
-    })
+    }).promise()
     .then(data => pyconf.parseAsync(data.Body.toString()))
     .catch(() => pyconf.parseAsync('checkpoints = -1'))
   }
@@ -238,11 +238,11 @@ class Configs {
     const { s3, options } = this.store
     const Bucket = options.S3.bucketName
     return pyconf.stringifyAsync(pyobj)
-      .then(Body => s3.putObjectAsync({
+      .then(Body => s3.putObject({
         Bucket,
         Body,
         Key: renewalPath
-      })).then(() => pyobj)
+      }).promise()).then(() => pyobj)
   }
 
   pyToJson(pyobj/*:?any*/)/*:?any*/ {

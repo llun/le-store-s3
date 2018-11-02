@@ -25,10 +25,10 @@ class Keypairs {
 
     const { s3, options } = this.store
     const Bucket = options.S3.bucketName
-    return s3.getObjectAsync({
+    return s3.getObject({
       Bucket,
       Key: keypath
-    }).then(body => {
+    }).promise().then(body => {
       const content = body.Body.toString()
       return format === 'jwk'
         ? { privateKeyJwk: JSON.parse(content) }
@@ -45,11 +45,11 @@ class Keypairs {
 
     const { s3, options } = this.store
     const { bucketName } = options.S3
-    return s3.putObjectAsync({
+    return s3.putObject({
       Bucket: bucketName,
       Key: keypath,
       Body: key
-    }).then(() => keypair)
+    }).promise().then(() => keypair)
   }
 }
 

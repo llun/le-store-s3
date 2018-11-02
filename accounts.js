@@ -77,12 +77,12 @@ class Accounts {
     { email, accountsDir }/*:AccountIdArgs*/)/*:Promise<?string>*/ {
     const { s3, options } = this.store
     const Bucket = options.S3.bucketName
-    return s3.listObjectsAsync({ Bucket, Prefix: accountsDir })
+    return s3.listObjects({ Bucket, Prefix: accountsDir }).promise()
       .then(objects => objects.Contents
         .filter(item => item.Key.endsWith('regr.json'))
         .map(item => item.Key))
       .then(regrs => {
-        return Promise.all(regrs.map(item => s3.getObjectAsync({ Bucket, Key: item })))
+        return Promise.all(regrs.map(item => s3.getObject({ Bucket, Key: item }).promise()))
           .then(contents => {
             return contents.map((item, index) => {
               const parts = regrs[index].split('/')
@@ -121,7 +121,7 @@ class Accounts {
       const accountDir = path.join(accountsDir, accountId)
       const keys = ['meta', 'private_key', 'regr']
       return Promise.all(keys.map(key => {
-        return s3.getObjectAsync({ Bucket, Key: path.join(accountDir, `${key}.json`) })
+        return s3.getObject({ Bucket, Key: path.join(accountDir, `${key}.json`) }).promise()
           .then(item => {
             const body = item.Body.toString('utf8')
             try {
@@ -169,21 +169,21 @@ class Accounts {
     const Bucket = bucketName
 
     return Promise.all([
-      s3.putObjectAsync({
+      s3.putObject({
         Bucket,
         Key: path.join(accountDir, 'meta.json'),
         Body: JSON.stringify(accountMeta)
-      }),
-      s3.putObjectAsync({
+      }).promise(),
+      s3.putObject({
         Bucket,
         Key: path.join(accountDir, 'private_key.json'),
         Body: JSON.stringify(keypair.privateKeyJwk)
-      }),
-      s3.putObjectAsync({
+      }).promise(),
+      s3.putObject({
         Bucket,
         Key: path.join(accountDir, 'regr.json'),
         Body: JSON.stringify({ body: receipt })
-      })
+      }).promise()
     ]).then(() => ({
       id: accountId,
       accountId,
