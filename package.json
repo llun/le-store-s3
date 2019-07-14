@@ -9,15 +9,15 @@
     "lint": "flow check"
   },
   "peerDependencies": {
-    "aws-sdk": "^2.346.0"
+    "aws-sdk": "^2.493.0"
   },
   "dependencies": {
-    "aws-sdk": "^2.346.0",
-    "bluebird": "^3.5.1",
-    "pyconf": "^1.1.2"
+    "aws-sdk": "^2.493.0",
+    "bluebird": "^3.5.5",
+    "pyconf": "^1.1.7"
   },
   "devDependencies": {
-    "flow-bin": "^0.61.0"
+    "flow-bin": "^0.102.0"
   },
   "keywords": [
     "greenlock",
